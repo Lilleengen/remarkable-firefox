@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+</head>
+
+<body>
+<h1>Read on reMarkable (unofficial)</h1>
+<div id="permissions" style="display: none; background-color: orange;">
+  <h2>Missing permissions</h2>
+  <p>In order to use this plugin you need to grant it access to
+    <code>https://webapp-prod.cloud.remarkable.engineering/</code>.</p>
+</div>
+<form>
+  <p><a target="_blank" href="https://my.remarkable.com/#browser">Get your one-time code here, and paste it under</a>
+  </p>
+  <label>8 digit code: <input type="text" minlength="8" maxlength="8" id="code" name="code"/></label><br><br>
+  <p>This is a unofficial, third party extention using a non-public API from reMarkable. It will break at some point</p>
+  <input type="checkbox" id="agree" name="agree"><label for="agree">I promise to blame this extension's author and not
+  reMarkable when it does</label><br><br>
+  <button id="submit" type="submit">Save</button>
+</form>
+<br><br><br>
+<h3>Reset</h3>
+<p>The button below will reset this extention, but not invalidate the session. You will have to do that <a
+  href="https://my.remarkable.com/device/browser">here</a>.</p>
+<div>
+  <button id="reset">Reset</button>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

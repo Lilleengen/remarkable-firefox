@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Read on reMarkable (unofficial)",
+  "version": "0.1",
+  "description": "Unofficial Firefox extention letting you read web articles on your reMarkable with a click.",
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png",
+    "256": "icons/256.png"
+  },
+  "host_permissions": [
+    "https://internal.cloud.remarkable.com/*",
+    "https://webapp-prod.cloud.remarkable.engineering/*"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png",
+      "256": "icons/256.png"
+    },
+    "default_title": "Send site to reMarkable"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "build/bundle.js"
+      ]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "remarkable-firefox@lilleengen.io"
+    }
+  }
+}

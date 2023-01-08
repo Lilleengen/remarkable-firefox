@@ -1,0 +1,39 @@
+{
+  "name": "remarkable-firefox",
+  "version": "0.1.0",
+  "description": "Unofficial firefox extention letting you read web articles on your reMarkable with a click.",
+  "scripts": {
+    "start": "WEB_EXT_IGNORE_FILES=js web-ext run --firefox-preview --verbose",
+    "lint": "WEB_EXT_IGNORE_FILES=js web-ext lint",
+    "build-js": "rollup --config rollup.config.mjs",
+    "build-web-ext": "WEB_EXT_IGNORE_FILES=js web-ext build --overwrite-dest",
+    "build": "npm run build-js && npm run build-web-ext"
+  },
+  "author": "Henrik Lilleengen",
+  "license": "MPL-2.0",
+  "contributions": [
+    {
+      "what": {
+        "name": "epub-creator",
+        "url": "https://github.com/NiklasGollenstede/epub-creator"
+      },
+      "who": [
+        "Niklas Gollenstede"
+      ],
+      "license": {
+        "name": "MPL 2.0",
+        "url": "https://github.com/NiklasGollenstede/epub-creator/blob/master/LICENSE"
+      }
+    }
+  ],
+  "dependencies": {
+    "@mozilla/readability": "^0.4.2",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "rollup": "^3.9.1",
+    "web-ext": "^7.4.0"
+  }
+}
