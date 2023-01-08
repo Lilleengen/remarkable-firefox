@@ -2,7 +2,7 @@
 
 ## Build
 
-Build with `npm build`
+Run `npm i`, followed by `npm run build`
 
 ### Env
 
