@@ -1,7 +1,7 @@
 {
   "name": "remarkable-firefox",
   "version": "0.1.0",
-  "description": "Unofficial firefox extention letting you read web articles on your reMarkable with a click.",
+  "description": "Unofficial firefox extension letting you read web articles on your reMarkable with a click.",
   "scripts": {
     "start": "WEB_EXT_IGNORE_FILES=js web-ext run --firefox-preview --verbose",
     "lint": "WEB_EXT_IGNORE_FILES=js web-ext lint",

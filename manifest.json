@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Read on reMarkable (unofficial)",
   "version": "0.1",
-  "description": "Unofficial Firefox extention letting you read web articles on your reMarkable with a click.",
+  "description": "Unofficial Firefox extension letting you read web articles on your reMarkable with a click.",
   "icons": {
     "16": "icons/16.png",
     "48": "icons/48.png",
