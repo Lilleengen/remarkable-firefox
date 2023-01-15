@@ -12,21 +12,18 @@ export default async ({virtDocument}) => {
     const doc = virtDocument.querySelector('.container').cloneNode(true);
 
     const resources = (await Promise.all(Array.from(doc.querySelectorAll('img'), async img => {
-        const {src} = img;
+        const {src: srcTmp, srcset, dataset} = img;
+        const src = srcTmp || srcset || dataset['src'] || dataset['srcset'];
         const pathPrefix = src && await getPathPrefix(src);
         const name = pathPrefix && pathPrefix + '/' + new URL(src).pathname.split('/').pop();
+        img.src = name;
         return {src, name};
     }))).filter(({src, name}) => src || name);
     const title = doc.querySelector('.reader-title').textContent;
     const url = doc.querySelector('.reader-domain').href;
-    const author = prompt('Please enter/confirm the authors name', (
-        doc.querySelector('.vcard .author.fn') || doc.querySelector('.vcard .author') || doc.querySelector('.author')
-        || doc.querySelector('.reader-credits') || {textContent: '<unknown>',}
-    ).textContent.replace(/\s+/g, ' ') || '<unknown>');
-
-    if (author == null) {
-        return null;
-    }
+    const author = (doc.querySelector('.vcard .author.fn') || doc.querySelector('.vcard .author') || doc.querySelector('.author')
+        || doc.querySelector('.reader-credits') || doc.querySelector('.reader-domain')
+    ).textContent.replace(/\s+/g, ' ') || '<unknown>';
 
     doc.querySelectorAll('style, link, menu').forEach(element => element.remove());
     doc.querySelectorAll('*').forEach(element => {
@@ -52,7 +49,5 @@ export default async ({virtDocument}) => {
         language: (new URL(url).hostname.match(/[.](.{2})$/) || [null, null,])[1],
         creator: [{name: author, role: 'author'}],
         resources,
-        cover: false,
-        nav: true,
     });
 }

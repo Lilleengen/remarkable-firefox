@@ -5,25 +5,7 @@
  */
 
 
-export const navHtml = ({language, chapters, title, nav,}, prefix = '') => `<?xml version="1.0" encoding="UTF-8" ?>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ops="http://www.idpf.org/2007/ops"
-	xml:lang="${language}">
-	<head>
-		<title>${nav && nav.title || 'Table of Content'}</title>
-	</head>
-	<body>
-		<nav ops:type="toc">
-			<h1>${title}</h1>
-			<ol>
-				${(nav === true) ? `<li><a href="nav.xhtml">Table of Content</a></li>` : ''}
-				${chapters.filter(v => v.name && v.title).map(v => `<li><a href="${prefix + v.name}">${v.title}</a></li>`).join('')}
-			</ol>
-		</nav>
-	</body>
-</html>`;
-
-export const containerXml = ({opf,}) => `<?xml version="1.0" encoding="UTF-8" ?>
+export const containerXml = ({opf}) => `<?xml version="1.0" encoding="UTF-8" ?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
 	<rootfiles>
 		<rootfile full-path="OEBPS/${opf.name}" media-type="${opf.mimeType || 'application/oebps-package+xml'}"/>
@@ -107,15 +89,6 @@ export const contentNcx = ({guid, language, title, creators, chapters}) => `<?xm
     `).join('')}
 	</navMap>
 </ncx>`;
-
-export const htmlFrame = ({content, title}) => `<!DOCTYPE html>
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>${title}</title>
-	</head>
-	<body>${content}</body>
-</html>`;
 
 export const xhtmlFrame = ({content, title}) => `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"

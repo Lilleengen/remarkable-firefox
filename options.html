@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
 </head>
 
-<body>
+<body style="margin: 20px;">
 <h1>Read on reMarkable (unofficial)</h1>
 <div id="permissions" style="display: none; background-color: orange;">
   <h2>Missing permissions</h2>
@@ -12,20 +12,31 @@
     <code>https://webapp-prod.cloud.remarkable.engineering/</code>.</p>
 </div>
 <form>
-  <p><a target="_blank" href="https://my.remarkable.com/#browser">Get your one-time code here, and paste it under</a>
-  </p>
-  <label>8 digit code: <input type="text" minlength="8" maxlength="8" id="code" name="code"/></label><br><br>
-  <p>This is a unofficial, third party extention using a non-public API from reMarkable. It will break at some point</p>
-  <input type="checkbox" id="agree" name="agree"><label for="agree">I promise to blame this extension's author and not
-  reMarkable when it does</label><br><br>
-  <button id="submit" type="submit">Save</button>
+  <fieldset>
+    <legend>Setup</legend>
+    <p><a target="_blank" href="https://my.remarkable.com/#browser">Get your one-time code here, and paste it under</a>
+    </p>
+    <label>8 digit code: <input type="text" minlength="8" maxlength="8" id="code" name="code"/></label><br><br>
+    <p>This is a unofficial, third party extention using a non-public API from reMarkable. It will break at some
+      point</p>
+    <input type="checkbox" id="agree" name="agree"><label for="agree">I promise to blame this extension's author and not
+    reMarkable when it does</label><br><br>
+    <button id="submit" type="submit">Save</button>
+  </fieldset>
 </form>
-<br><br><br>
-<h3>Reset</h3>
-<p>The button below will reset this extention, but not invalidate the session. You will have to do that <a
-  href="https://my.remarkable.com/device/browser">here</a>.</p>
-<div>
-  <button id="reset">Reset</button>
+<br><br><br><br>
+<div style="display: flex;">
+  <fieldset style="margin-bottom: 25px;">
+    <legend>Reset</legend>
+    <p>The button below will reset this extention, but not invalidate the session. You will have to do that <a
+      href="https://my.remarkable.com/device/browser">here</a>.</p>
+    <button id="reset">Reset</button>
+  </fieldset>
+  <fieldset style="margin-bottom: 25px;">
+    <legend>Request permission to all sites</legend>
+    <p>This will grant this extention access to all sites, and is probably not a smart thing to do.</p>
+    <button id="request-perm-all">I understand, request anyways</button>
+  </fieldset>
 </div>
 <script src="options.js"></script>
 </body>

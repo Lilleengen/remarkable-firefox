@@ -7,19 +7,19 @@ export default async () => {
         return null;
     }
     if (!contents.language) {
-        contents.language = 'nb';
+        contents.language = 'en';
     }
 
-    const book = new EPub(Object.assign(contents, {markNav: true}));
-    (await book.loadResources({allowErrors: true,}));
+    const book = new EPub(Object.assign(contents));
+    await book.loadResources({allowErrors: true,});
+
+    browser.runtime.sendMessage({type: 'clean-up'});
+
     const blob = await book.toBlob();
 
-    browser.runtime.sendMessage({
+    return await browser.runtime.sendMessage({
         name: contents.title,
         blob: blob,
         type: 'upload'
     });
-
-
-    return book.name;
 };

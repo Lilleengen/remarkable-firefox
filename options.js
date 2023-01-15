@@ -20,43 +20,61 @@ async function saveOptions(e) {
         "method": "POST"
     });
 
-    browser.storage.local.set({
+    await browser.storage.sync.set({
         deviceToken: await deviceToken.text()
     });
 
     location.reload();
 }
 
-function reset(e) {
+async function reset(e) {
     e.preventDefault();
 
     document.querySelector("#submit").disabled = true;
 
-    browser.storage.local.set({
-        deviceToken: undefined,
-        userToken: undefined
-    });
+    await browser.storage.sync.clear();
 
     location.reload();
 }
 
+async function requestPermissionAll(e) {
+    e.preventDefault();
+
+    await browser.permissions.request({origins: ['<all_urls>']});
+
+    location.reload();
+}
+
+
 async function restoreOptions() {
     const permissions = await browser.permissions.getAll();
-    const hasRemarkablePermission = permissions.origins.includes('https://webapp-prod.cloud.remarkable.engineering/*');
+    const hasGrantedAll = permissions.origins.includes('<all_urls>');
+    const hasRemarkablePermission = hasGrantedAll || permissions.origins.includes('https://webapp-prod.cloud.remarkable.engineering/*');
 
     if (!hasRemarkablePermission) {
         document.querySelector("#permissions").style.display = 'block'
     }
 
-    const storage = await browser.storage.local.get();
+
+    const storage = await browser.storage.sync.get();
 
     const setup = !hasRemarkablePermission || !!storage.deviceToken;
     document.querySelector("#code").disabled = setup;
+    document.querySelector("#code").value = 'Authenticated against reMarkable';
     document.querySelector("#agree").disabled = setup;
     document.querySelector("#agree").checked = setup;
     document.querySelector("#submit").disabled = setup;
+    document.querySelector("#request-perm-all").disabled = hasGrantedAll;
+
+    if (setup) {
+        document.querySelector("#submit").innerText = 'Press reset below to change';
+    }
+    if (hasGrantedAll) {
+        document.querySelector("#request-perm-all").innerText = 'Permission provided';
+    }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.querySelector("#reset").addEventListener("click", reset);
+document.querySelector("#request-perm-all").addEventListener("click", requestPermissionAll);

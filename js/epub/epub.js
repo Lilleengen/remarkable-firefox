@@ -71,32 +71,6 @@ export default class EPub {
             })
         }));
 
-        if (typeof this.cover === 'string') {
-            // this.cover = this.cover.replace(/^oebps[\/\\]/i, '');
-            this.cover = this.chapters.find(({name,}) => name === this.cover);
-        }
-
-        if (typeof this.nav === 'string') {
-            this.nav = this.chapters.find(({name}) => name === this.nav);
-            if (!this.nav) {
-                this.nav = true;
-            } else if (!(/<nav[^>]*?ops:type="toc".*?>[^]*?<\/nav>/).test(this.nav.content)) { // invalid toc
-                this.nav.mimeType = mimeTypes.xhtml;
-                const prefix = this.nav.name.replace(/[^/\\]+/g, '..').replace(/\.\.$/, '') || '';
-                this.nav.originalContent = this.nav.content;
-                this.nav.content = Templates.navHtml(this, prefix);
-            }
-        }
-
-        if (this.nav === true) {
-            this.chapters.unshift(this.nav = {
-                name: 'nav.xhtml',
-                title: 'Table of Content',
-                mimeType: mimeTypes.xhtml,
-                content: Templates.navHtml(this),
-            });
-        }
-
         if (this.ncx !== false && typeof this.ncx !== 'object') {
             this.ncx = {
                 name: 'content.ncx',
@@ -126,31 +100,47 @@ export default class EPub {
             return this;
         }
         const resources = Array.from(new Map(
-            this.resources.filter(({src, content,}) => src && !content) // only unloaded
-                .map(it => [it.src, it,]) // unique .src
+            this.resources.filter(({src, content}) => src && !content) // only unloaded
+                .map(it => [it.src, it]) // unique .src
         ).values());
 
         let loaded;
         const loading = Promise.all(resources.map(async resource => {
+            let error;
+            let content
+            let mimeHeader;
             try {
-                const reply = await fetch(resource.src);
-                if (!reply.ok) {
-                    console.error(`Bad return status`);
-                    throw new Error(`Bad return status`);
+                const response = await fetch(resource.src);
+                if (response && response.ok) {
+                    content = await response.arrayBuffer();
+                    mimeHeader = response.headers.get('Content-Type');
+                }
+            } catch (e) {
+                error = e;
+            }
+            if (!content) {
+                try {
+                    const response = await browser.runtime.sendMessage({
+                        url: resource.src,
+                        type: 'cors-help'
+                    });
+                    content = response.content;
+                    mimeHeader = response.mimeHeader;
+                } catch (e) {
+                    error = e;
                 }
 
-                const content = await reply.arrayBuffer(); // .blob() can lead to security context issues later on
-                resource.content = btoa(String.fromCharCode(...new Uint8Array(content)));
-                resource.mimeType = reply.headers.get('Content-Type') || resource.mimeType;
-                resource.name = resource.name || resource.src.match(/\/\/.*?\/(.*)$/)[1]; //.replace(/^oebps[\/\\]/i, '');
-            } catch (error) {
-                if (allowErrors) {
-                    console.error(`Failed to fetch resource`, error);
-                } else {
-                    console.error(`Failed to fetch resource`, error);
-                    throw error;
+                if (!content) {
+                    if (!allowErrors) {
+                        throw error;
+                    }
                 }
             }
+
+            resource.content = btoa(String.fromCharCode(...new Uint8Array(content)));
+            resource.mimeType = mimeHeader || resource.mimeType;
+            resource.name = resource.name || resource.src.match(/\/\/.*?\/(.*)$/)[1]; //.replace(/^oebps[\/\\]/i, '');
+            resource.options = {base64: true};
         })).then(() => (loaded = true));
 
         (await Promise.race([loading, new Promise(wake => setTimeout(wake, timeout || 120e3)),]));
@@ -178,7 +168,7 @@ export default class EPub {
         zip.folder('META-INF').file('container.xml', Templates.containerXml(this));
 
         const oebps = zip.folder('OEBPS');
-        [this.opf, this.ncx, ...(this.chapters || []), ...(this.resources.filter(_ => _.content) || []),]
+        [this.opf, this.ncx, ...(this.chapters || []), ...(this.resources.filter(_ => _.content) || [])]
             .forEach(({name, content, options}) => {
                 oebps.file(name, content, options);
             });
